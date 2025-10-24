@@ -161,3 +161,47 @@ exports.updateProfile = async (req, res) => {
         res.status(500).json({ message: "Server error updating user profile." });
     }
 };
+
+exports.changePassword = async (req, res) => {
+    const { oldPassword, newPassword } = req.body;
+
+    // Validasi input
+    if (!oldPassword || !newPassword) {
+        return res.status(400).json({ message: "Password lama dan password baru wajib diisi." });
+    }
+
+    if (newPassword.length < 6) {
+        return res.status(400).json({ message: "Password baru minimal harus 6 karakter." });
+    }
+
+    try {
+        // req.user didapat dari middleware 'protect', tapi TIDAK TERMASUK password.
+        // Kita harus fetch ulang user dari DB untuk bisa membandingkan password.
+        const user = await User.findByPk(req.user.id);
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Bandingkan 'oldPassword' dari body dengan password di database
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+
+        if (!isMatch) {
+            return res.status(400).json({ message: "Password lama salah." });
+        }
+
+        // Hash password baru
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update password di database
+        user.password = hashedPassword;
+        await user.save();
+
+        res.status(200).json({ message: "Password berhasil diubah." });
+
+    } catch (error) {
+        console.error('ChangePassword error:', error);
+        res.status(500).json({ message: "Server error updating password." });
+    }
+};
