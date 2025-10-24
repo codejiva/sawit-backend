@@ -1,7 +1,7 @@
 // routes/authRoute.js
 const express = require('express');
 const router = express.Router();
-const { register, login, getMe } = require('../controllers/authController');
+const { register, login, getMe, updateProfile } = require('../controllers/authController');
 const { protect } = require('../middleware/authMiddleware');
 
 // @route   POST api/v1/auth/register
@@ -18,5 +18,11 @@ router.post('/login', login);
 // @desc    Get current logged in user profile
 // @access  Private (butuh token)
 router.get('/me', protect, getMe);
+
+// 2. Tambahkan route baru ini
+// @route   PUT api/v1/auth/profile
+// @desc    Update user profile
+// @access  Private
+router.put('/profile', protect, updateProfile);
 
 module.exports = router;

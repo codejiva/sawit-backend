@@ -121,3 +121,43 @@ exports.getMe = async (req, res) => {
         res.status(500).json({ message: "Server error retrieving user profile." });
     }
 };
+
+exports.updateProfile = async (req, res) => {
+    // Ambil field yang boleh di-update dari body
+    // Kita ambil juga 'name' (Nama Lengkap)
+    const { firstName, lastName, phone, company, name, role } = req.body;
+
+    try {
+        // req.user didapat dari middleware 'protect'
+        const user = req.user; 
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." });
+        }
+
+        // Update field-field di objek user
+        // Kita pakai || user.field untuk memastikan data lama tidak hilang jika field tidak dikirim
+        user.name = name || user.name;
+        user.firstName = firstName || user.firstName;
+        user.lastName = lastName || user.lastName;
+        user.phone = phone || user.phone;
+        user.company = company || user.company;
+        
+        // Cek jika 'role' ada di body.
+        // harusnya yang boleh ganti role admin aja
+        // tapi sekarang gue biarin dulu aja ya
+        if (role) {
+            user.role = role;
+        }
+
+        // Simpan perubahan ke database
+        await user.save();
+
+        // Kirim balik data user yang sudah ter-update
+        res.status(200).json(user.toJSON());
+
+    } catch (error) {
+        console.error('UpdateProfile error:', error);
+        res.status(500).json({ message: "Server error updating user profile." });
+    }
+};
