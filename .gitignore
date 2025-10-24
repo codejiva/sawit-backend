@@ -7,3 +7,25 @@ node_modules
 # Logs
 npm-debug.log
 *.log
+
+# === Python / Data Science ===
+# Virtual Environment
+venv/
+*.venv/
+env/
+.env
+
+# Python Cache
+__pycache__/
+*.pyc
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Data (jika ada)
+*.csv
+*.zip
+
+# Model
+*.joblib
+*.pkl
