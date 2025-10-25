@@ -7,6 +7,7 @@ const { sequelize, connectDB } = require('./config/database');
 // Import routes
 const authRoute = require('./routes/authRoute');
 const palmAiRoute = require('./routes/palmAiRoute');
+const lahanRoute = require('./routes/lahanRoute')
 
 
 // Models
@@ -65,6 +66,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/palm-ai', palmAiRoute);
+app.use('/api/v1/lahan', lahanRoute)
 
 // === START SERVER ===
 app.listen(PORT, () => {
