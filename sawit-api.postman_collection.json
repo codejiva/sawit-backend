@@ -1,0 +1,754 @@
+{
+	"info": {
+		"_postman_id": "YOUR_COLLECTION_ID",
+		"name": "Saw-it Backend API v1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "YOUR_EXPORTER_ID"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nama User Baru\",\n    \"email\": \"userbaru@sawit.com\",\n    \"password\": \"passwordminimal6\",\n    \"role\": \"user\" \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"register"
+							]
+						},
+						"description": "Mendaftarkan user baru."
+					},
+					"response": []
+				},
+				{
+					"name": "Login User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Script Postman untuk menyimpan token ke environment",
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.token) {",
+									"        pm.environment.set(\"jwt_token\", jsonData.token);",
+									"        console.log(\"JWT Token saved to environment variable 'jwt_token'.\");",
+									"    } else {",
+									"        console.log(\"Token not found in response.\");",
+									"    }",
+									"} else {",
+									"    console.log(\"Login failed, token not saved. Status code: \" + pm.response.code);",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"userbaru@sawit.com\",\n    \"password\": \"passwordminimal6\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Mengotentikasi user dan mendapatkan JWT token."
+					},
+					"response": []
+				},
+				{
+					"name": "Get My Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/auth/me",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Mendapatkan data profil user yang sedang login."
+					},
+					"response": []
+				},
+				{
+					"name": "Update My Profile",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nama User Update\",\n    \"firstName\": \"Nama\",\n    \"lastName\": \"Depan\",\n    \"phone\": \"+62...\",\n    \"company\": \"PT Sawit Sejahtera\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/profile",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"profile"
+							]
+						},
+						"description": "Memperbarui data profil user yang sedang login."
+					},
+					"response": []
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"oldPassword\": \"passwordminimal6\",\n    \"newPassword\": \"passwordbaruaman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/change-password",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"change-password"
+							]
+						},
+						"description": "Mengubah password user yang sedang login."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints untuk registrasi, login, dan manajemen profil user."
+		},
+		{
+			"name": "Palm-AI Chatbot",
+			"item": [
+				{
+					"name": "Post New Chat / Continue Chat",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "// Untuk chat baru:\n{\n    \"prompt\": \"Bagaimana cara pemupukan sawit yang benar?\"\n}\n\n// Untuk melanjutkan chat (opsional):\n// {\n//     \"prompt\": \"Kalau untuk tanah gambut bagaimana?\",\n//     \"conversationId\": \"ID_PERCAKAPAN_SEBELUMNYA\" \n// }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/palm-ai/chat",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"palm-ai",
+								"chat"
+							]
+						},
+						"description": "Mengirim prompt baru atau melanjutkan percakapan."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chat History List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/palm-ai/history",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"palm-ai",
+								"history"
+							]
+						},
+						"description": "Mendapatkan daftar judul percakapan user."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Chat Messages by ID",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/palm-ai/history/:id",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"palm-ai",
+								"history",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ID_PERCAKAPAN_ANDA",
+									"description": "ID Percakapan (dari Get Chat History List)"
+								}
+							]
+						},
+						"description": "Mendapatkan semua pesan dalam satu percakapan."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints untuk interaksi dengan chatbot Palm-AI."
+		},
+		{
+			"name": "Lahan",
+			"item": [
+				{
+					"name": "Get All Lahan",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/lahan",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"lahan"
+							]
+						},
+						"description": "Mendapatkan daftar semua lahan milik user."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Lahan Prediction",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/lahan/:id/predict",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"lahan",
+								":id",
+								"predict"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "ID_LAHAN_ANDA",
+									"description": "ID Lahan yang ingin diprediksi"
+								}
+							]
+						},
+						"description": "Mendapatkan prediksi produktivitas real-time untuk satu lahan."
+					},
+					"response": []
+				},
+				{
+					"name": "[DEV ONLY] Create Dummy Lahan & Historis",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Nama Lahan Dummy Baru\",\n    \"penanggung_jawab\": \"Tim C\",\n    \"lahan_kabupaten\": \"Bengkulu\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/lahan/dummy",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"lahan",
+								"dummy"
+							]
+						},
+						"description": "Membuat data lahan & 3 bulan data historis dummy."
+					},
+					"response": []
+				},
+				{
+					"name": "[DEV ONLY] Add Dummy Geometry",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lahanId\": \"ID_LAHAN_DARI_CREATE_DUMMY\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/lahan/dummy-geometry",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"lahan",
+								"dummy-geometry"
+							]
+						},
+						"description": "Menambahkan data polygon GeoJSON dummy ke lahan yang sudah ada."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints untuk mengelola data lahan dan mendapatkan prediksi."
+		},
+		{
+			"name": "Estimasi",
+			"item": [
+				{
+					"name": "Get Estimasi Summary",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estimasi/summary",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estimasi",
+								"summary"
+							]
+						},
+						"description": "Mendapatkan data agregat untuk 4 summary card di halaman Estimasi."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Estimasi History",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/estimasi/history?tahun=2025&bulan=9",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estimasi",
+								"history"
+							],
+							"query": [
+								{
+									"key": "tahun",
+									"value": "2025",
+									"description": "(Opsional) Filter berdasarkan tahun",
+									"disabled": true
+								},
+								{
+									"key": "bulan",
+									"value": "9",
+									"description": "(Opsional) Filter berdasarkan bulan (angka 1-12)",
+									"disabled": true
+								},
+								{
+									"key": "blok",
+									"value": "ID_LAHAN",
+									"description": "(Opsional) Filter berdasarkan ID Lahan",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Mendapatkan riwayat prediksi untuk ditampilkan di tabel, bisa difilter."
+					},
+					"response": []
+				},
+				{
+					"name": "[DEV ONLY] Create Dummy Prediksi",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"lahanId\": \"ID_LAHAN_YANG_SUDAH_ADA\",\n    \"bulan\": \"2025-11-01\", \n    \"prediksi\": \"26.0\",\n    \"aktual\": \"25.8\", \n    \"status\": \"Selesai\" \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/estimasi/dummy",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"estimasi",
+								"dummy"
+							]
+						},
+						"description": "Membuat satu data prediksi dummy untuk lahan tertentu."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints terkait halaman Estimasi Produksi."
+		},
+		{
+			"name": "Dashboard",
+			"item": [
+				{
+					"name": "Get Spasial Data (GeoJSON)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/dashboard/spasial",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"dashboard",
+								"spasial"
+							]
+						},
+						"description": "Mendapatkan data GeoJSON untuk peta dashboard."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Summary Data (NDVI Cards)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/dashboard/summary",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"dashboard",
+								"summary"
+							]
+						},
+						"description": "Mendapatkan data agregat untuk summary card NDVI."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Trend Data (Production Chart)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/dashboard/tren",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"dashboard",
+								"tren"
+							]
+						},
+						"description": "Mendapatkan data bulanan untuk chart tren produksi."
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints untuk data yang ditampilkan di Dashboard Utama."
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt_token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost:5001/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "PASTE_YOUR_TOKEN_HERE",
+			"type": "string"
+		}
+	]
+}
