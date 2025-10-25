@@ -43,6 +43,9 @@ const Lahan = sequelize.define('Lahan', {
     lon: {
         type: DataTypes.FLOAT,
         allowNull: true
+    },
+    geometry: {
+        type: DataTypes.GEOMETRY('POLYGON', 4326),
     }
 }, {
     tableName: 'lahan',

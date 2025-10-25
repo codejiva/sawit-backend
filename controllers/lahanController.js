@@ -2,7 +2,8 @@
 const axios = require('axios');
 const Lahan = require('../models/Lahan');
 const DataHistoris = require('../models/DataHistoris');
-const { Op } = require('sequelize'); // Kita butuh ini untuk query 'latest'
+const { Op } = require('sequelize');
+const { sequelize } = require('../config/database')
 
 // URL API Python kita
 const PYTHON_API_URL = 'http://localhost:8000/predict';
@@ -146,5 +147,45 @@ exports.getAllLahan = async (req, res) => {
     } catch (error) {
         console.error('GetAllLahan error:', error);
         res.status(500).json({ message: "Gagal mengambil daftar lahan." });
+    }
+};
+
+exports.addDummyGeometry = async (req, res) => {
+    const { lahanId } = req.body; // Ambil ID lahan dari body
+    const userId = req.user.id;
+
+    if (!lahanId) {
+        return res.status(400).json({ message: "lahanId is required." });
+    }
+
+    try {
+        // Cari lahan milik user
+        const lahan = await Lahan.findOne({ where: { id: lahanId, userId: userId } });
+        if (!lahan) {
+            return res.status(404).json({ message: "Lahan not found or not owned by user." });
+        }
+
+        // Contoh GeoJSON Polygon sederhana (segiempat)
+        const dummyGeoJson = {
+            type: "Polygon",
+            coordinates: [[
+                [102.50, -2.50], // Pojok Kiri Bawah
+                [102.51, -2.50], // Pojok Kanan Bawah
+                [102.51, -2.49], // Pojok Kanan Atas
+                [102.50, -2.49], // Pojok Kiri Atas
+                [102.50, -2.50]  // Kembali ke awal (penting!)
+            ]]
+        };
+
+        // Update kolom geometry menggunakan fungsi PostGIS
+        // Sequelize otomatis handle konversi GeoJSON ke tipe GEOMETRY
+        lahan.geometry = dummyGeoJson;
+        await lahan.save();
+
+        res.status(200).json({ message: `Dummy geometry added to Lahan ${lahanId}` });
+
+    } catch (error) {
+        console.error('AddDummyGeometry error:', error);
+        res.status(500).json({ message: "Server error adding dummy geometry." });
     }
 };

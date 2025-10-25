@@ -1,7 +1,7 @@
 // routes/lahanRoute.js
 const express = require('express');
 const router = express.Router();
-const { createDummyLahan, predictLahan, getAllLahan } = require('../controllers/lahanController');
+const { createDummyLahan, predictLahan, getAllLahan, addDummyGeometry } = require('../controllers/lahanController');
 const { protect } = require('../middleware/authMiddleware');
 
 // @route   POST api/v1/lahan/dummy
@@ -18,6 +18,11 @@ router.get('/:id/predict', protect, predictLahan);
 // @desc    Mendapatkan daftar semua lahan milik user
 // @access  Private
 router.get('/', protect, getAllLahan);
+
+// @route   POST api/v1/lahan/dummy-geometry
+// @desc    Menambah dummy geometry ke lahan (HANYA development)
+// @access  Private
+router.post('/dummy-geometry', protect, addDummyGeometry);
 
 
 module.exports = router;

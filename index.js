@@ -8,6 +8,7 @@ const { sequelize, connectDB } = require('./config/database');
 const authRoute = require('./routes/authRoute');
 const palmAiRoute = require('./routes/palmAiRoute');
 const lahanRoute = require('./routes/lahanRoute')
+const estimasiRoutes = require('./routes/estimasiRoute')
 
 
 // Models
@@ -16,6 +17,7 @@ const Conversation = require('./models/Conversation');
 const Message = require('./models/Message');
 const Lahan = require('./models/Lahan')
 const DataHistoris = require('./models/DataHistoris')
+const Prediksi = require('./models/Prediksi')
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -42,6 +44,10 @@ DataHistoris.belongsTo(Lahan, { foreignKey: 'lahanId' });
 User.hasMany(Lahan, { foreignKey: 'userId' }); 
 Lahan.belongsTo(User, { foreignKey: 'userId' }); 
 
+// 1 Lahan punya BANYAK Prediksi
+Lahan.hasMany(Prediksi, { foreignKey: 'lahanId' }); 
+Prediksi.belongsTo(Lahan, { foreignKey: 'lahanId' }); 
+
 // === DATABASE CONNECTION & SYNC ===
 (async () => {
     try {
@@ -67,6 +73,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/palm-ai', palmAiRoute);
 app.use('/api/v1/lahan', lahanRoute)
+app.use('/api/v1/estimasi', estimasiRoutes)
 
 // === START SERVER ===
 app.listen(PORT, () => {
