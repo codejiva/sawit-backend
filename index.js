@@ -13,6 +13,8 @@ const palmAiRoute = require('./routes/palmAiRoute');
 const User = require('./models/User');
 const Conversation = require('./models/Conversation');
 const Message = require('./models/Message');
+const Lahan = require('./models/Lahan')
+const DataHistoris = require('./models/DataHistoris')
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -31,16 +33,25 @@ Conversation.belongsTo(User, { foreignKey: 'userId' });
 Conversation.hasMany(Message, { foreignKey: 'conversationId' });
 Message.belongsTo(Conversation, { foreignKey: 'conversationId' });
 
+// 1 Lahan punya BANYAK DataHistoris
+Lahan.hasMany(DataHistoris, { foreignKey: 'lahanId' }); 
+DataHistoris.belongsTo(Lahan, { foreignKey: 'lahanId' }); 
+
+// 1 User (misal manager) bertanggung jawab atas BANYAK Lahan
+User.hasMany(Lahan, { foreignKey: 'userId' }); 
+Lahan.belongsTo(User, { foreignKey: 'userId' }); 
+
 // === DATABASE CONNECTION & SYNC ===
-// Fungsi IIFE (Immediately Invoked Function Expression) untuk setup database
 (async () => {
     try {
-        await connectDB(); // Tes koneksi
+        await connectDB(); 
+        
         await sequelize.sync({ force: false }); 
+        
         console.log('Database synchronized successfully.');
     } catch (error) {
         console.error('Failed to synchronize database:', error);
-        process.exit(1); // Keluar jika koneksi DB gagal
+        process.exit(1);
     }
 })();
 
