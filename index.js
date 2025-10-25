@@ -9,6 +9,7 @@ const authRoute = require('./routes/authRoute');
 const palmAiRoute = require('./routes/palmAiRoute');
 const lahanRoute = require('./routes/lahanRoute')
 const estimasiRoutes = require('./routes/estimasiRoute')
+const dashboardRoutes = require('./routes/dashboardRoute')
 
 
 // Models
@@ -74,6 +75,7 @@ app.use('/api/v1/auth', authRoute);
 app.use('/api/v1/palm-ai', palmAiRoute);
 app.use('/api/v1/lahan', lahanRoute)
 app.use('/api/v1/estimasi', estimasiRoutes)
+app.use('/api/v1/dashboard', dashboardRoutes)
 
 // === START SERVER ===
 app.listen(PORT, () => {
