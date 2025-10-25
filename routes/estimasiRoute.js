@@ -1,15 +1,21 @@
 // routes/estimasiRoute.js
 const express = require('express');
 const router = express.Router();
-const { createDummyPrediksi } = require('../controllers/estimasiController');
+const { createDummyPrediksi, getEstimasiSummary, getEstimasiHistory } = require('../controllers/estimasiController');
 const { protect } = require('../middleware/authMiddleware');
 
-// @route   POST api/v1/estimasi/dummy
-// @desc    Membuat data prediksi dummy (HANYA development)
-// @access  Private
+// ... (route POST /dummy) ...
 router.post('/dummy', protect, createDummyPrediksi);
 
-// --- (Nanti kita tambahkan route GET /summary dan GET /history di sini) ---
+// @route   GET api/v1/estimasi/summary
+// @desc    Mengambil data summary untuk cards estimasi
+// @access  Private
+router.get('/summary', protect, getEstimasiSummary);
+
+// @route   GET api/v1/estimasi/history
+// @desc    Mengambil data history estimasi untuk tabel (dengan filter)
+// @access  Private
+router.get('/history', protect, getEstimasiHistory);
 
 
 module.exports = router;
